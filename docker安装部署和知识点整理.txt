@@ -1,0 +1,179 @@
+14.04
+1、入门
+uname -r 
+查看是否高于3.10
+apt-get update
+apt-get install apt-transport-https ca-certificates
+apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+编辑/etc/apt/sources.list.d/docker.list 增加内容
+deb https://apt.dockerproject.org/repo ubuntu-trusty main
+
+apt-get update
+apt-get purge lxc-docker 删除旧版本
+apt-cache policy docker-engine
+
+apt-get install linux-image-extra-$(uname -r)
+apt-get install apparmor
+apt-get install docker-engine
+service docker start
+docker run hello-world
+2、应用，命令
+docker run ubuntu /bin/echo 'Hello world'
+docker run -t -i ubuntu /bin/bash
+docker run -d ubuntu /bin/sh -c "while true; do echo hello world; sleep 1; done"
+
+docker ps
+docker logs 容器id
+docker stop 容器id
+docker start 容器id
+docker rm 容器id
+docker version
+docker --help
+docker run -d 后台运行
+docker run -P 运行一个端口
+docker 命令 --help
+docker ps -a 查看所有的容器
+docker export web >web.tar 导出
+docker import web.tar 导出
+docker run -d -p 80:5000 training/webapp python app.py
+docker port b3788ea706f8 5000  查看容器里5000端口所映射主机的端口
+
+查看log docker logs -f b3788ea706f8
+查看进程 docker top b3788ea706f8
+查看容器json 
+docker inspect b3788ea706f8
+移除所有容器和镜像：
+docker kill $(docker ps -q) ; docker rm $(docker ps -a -q) ; docker rmi $(docker images -q -a) 
+
+
+docker tag gcr.io/google_containers/pause:0.8.0 gcr.io/google_containers/pause
+
+3、制作和管理镜像
+docker images
+带版本：docker run -t -i ubuntu:14.04 /bin/bash
+下载一个镜像：docker pull centos
+搜索镜像 docker search tomcat
+提交镜像：docker commit -m "Added json gem" -a "Kate Smith" 0b2616b0e5a8 Ubuntu:v2
+构建镜像：docker build -t ouruser/sinatra:v2 .
+查看一个镜像的所有标签：docker images ubuntu
+list image digest values ：docker images --digests | head  文摘
+Push an image to Docker Hub：docker push ouruser/sinatra
+移除镜像：docker rmi training/sinatra
+
+4、网络：
+查看网络类型
+docker network ls
+查看容器网络
+docker network inspect bridge
+断开：docker network disconnect bridge networktest
+增加一个网络：docker network create -d bridge my-bridge-network
+容器连接网络：docker run -d --net=my-bridge-network --name db training/postgres
+得到ip地址：docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' networktest
+运行命令：docker exec -it db bash
+5、存储：
+
+docker run -d -P --name web3 -v /home/webapp training/webapp python app.py
+docker exec -i -t web3 /bin/bash
+docker exec web3 ifconfig
+创建卷
+docker volume create -d flocker --name my-named-volume -o size=20GB
+docker run -d -P \
+  -v my-named-volume:/opt/webapp \
+  --name web training/webapp python app.py
+
+
+
+
+知识点：
+1、开启远程访问：
+# vim /etc/default/docker
+DOCKER_OPTS="-H 0.0.0.0:5555"
+# service docker restart
+使用其他主机访问：
+#docker -H IP:5555 images
+访问别的主机的容器：
+docker -H 192.168.195.11:5555 exec -it  9cae5799ffeb /bin/bash
+
+# docker images
+FATA[0000] Cannot connect to the Docker daemon. Is 'docker -d' running on this host?
+# vim /etc/default/docker
+DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:5555"
+# service docker restart
+
+2、映射容器端口
+使用 -P 时，Docker 会随机映射一个端口到内部容器开放的网络端口。 
+使用 -p 时，可以指定要映射的端口，在一个指定端口上只可以绑定一个容器。支持的格式有 ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort。
+
+$ sudo docker run -d -P training/webapp python app.py
+$ sudo docker run -d -p 5000:5000 training/webapp python app.py
+       docker run --restart=always -d -p 8003:5000 training/webapp python app.py 随着docker服务启动
+
+3、使用国内docker源
+修改Docker配置文件/etc/default/docker如下：
+
+DOCKER_OPTS="--registry-mirror=http://aad0405c.m.daocloud.io"
+使用service docker restart重启Docker服务即可。
+
+速度1M/s
+
+4、开机自动启动容器
+ubuntu
+新建文件
+#vim docker-web4.conf ，内容
+description "web4"
+author "Me"
+start on filesystem and started docker
+stop on runlevel [!2345]
+respawn
+script
+  /usr/bin/docker start -a web4
+end script
+
+
+放到/etc/init/下
+
+
+
+
+挂载目录  
+
+docker run -v /app:/usr/local/tomcat/webapps -d  tomcat
+
+
+kubectl delete -f ./javaweb-2.yaml
+docker stop $(docker ps -a|grep tomcat);docker stop $(docker ps -a|grep sam);docker stop $(docker ps -a|grep javaweb);
+docker rm $(docker ps -a|grep tomcat);docker rm $(docker ps -a|grep data);docker rm m$(docker ps -a|grep javaweb);
+
+
+
+
+docker私有仓库（2.0）
+http://tonybai.com/2016/02/26/deploy-a-private-docker-registry/
+大概步骤：
+1、docker run -d -p 80:5000 -v /root/registry:/tmp/registry --restart=always --name=registry registry:2
+访问：http://192.168.15.33/v2/_catalog
+2、docker tag busybox:latest 192.168.15.33:80/tonybai/busybox:latest
+3、在其他docker环节修改配置文件/etc/default/docker
+添加
+DOCKER_OPTS="$DOCKER_OPTS --insecure-registry=192.168.15.33:80"
+后重启docker
+4、docker push 192.168.15.33:80/tonybai/busybox:latest
+5、删除掉再pull试试
+
+
+
+
+
+
+
+数据容器
+
+1、docker run -t -i -d -v /app:/usr/local/tomcat/webapps --name test1 busybox  把主机上的app映射到容器
+2、docker run -it --restart=always -d -p 6666:8080 --volumes-from test1 --name tomcat6  tomcat  使用test1容器的数据
+
+
+
+
+
+redis
+docker run -v /etc/redis/redis.conf:/usr/local/etc/redis/redis.conf --name=master redis redis-server /usr/local/etc/redis/redis.conf
