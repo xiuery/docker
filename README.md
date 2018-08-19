@@ -48,6 +48,12 @@ sudo docker stop CONTAINER [CONTAINER...]
 sudo docker start CONTAINER [CONTAINER...]
 # 删除容器
 sudo docker rm CONTAINER [CONTAINER...]
+# 停止所有容器
+sudo docker stop $(sudo docker ps -q)
+# 删除所有容器
+sudo docker rm $(sudo docker ps -aq)
+# 停止并删除所有容器
+sudo docker stop $(sudo docker ps -q) & sudo docker rm $(sudo docker ps -aq)
 ```
 
 - 自定义镜像
