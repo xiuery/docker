@@ -1,5 +1,29 @@
 ## docker常用命令
 
+- INSTALL
+```
+# uninstall old versions
+sudo apt-get remove docker docker-engine docker.io
+# install using the repository
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# install
+sudo apt-get update
+# install the latest version
+sudo apt-get install docker-ce
+# or install special version
+apt-cache madison docker-ce
+sudo apt-get install docker-ce=<VERSION>
+```
+
+- UNINSTALL
+```
+sudo apt-get purge docker-ce
+sudo rm -rf /var/lib/docker
+```
+
 - 镜像
 ```
 # 查看本地所有镜像
@@ -46,8 +70,12 @@ sudo docker top CONTAINER
 sudo docker stop CONTAINER [CONTAINER...]
 # 启动停止的容器
 sudo docker start CONTAINER [CONTAINER...]
+# 重启容器
+sudo docker restart CONTAINER [CONTAINER...]
 # 删除容器
 sudo docker rm CONTAINER [CONTAINER...]
+# 重启所有容器
+sudo docker restart $(sudo docker ps -q)
 # 停止所有容器
 sudo docker stop $(sudo docker ps -q)
 # 删除所有容器
@@ -88,6 +116,7 @@ sudo docker run -t -i --name x_centos -v /home/projects/test:/home/projects/test
 sudo docker run -t -i --name x_centos -v /home/projects/test:/home/projects/test:ro centos:latest /bin/bash
 
 ```
+
 
 
 
