@@ -55,7 +55,8 @@ sudo mkdir -p $WORKDIR_LNMP/php
 sudo docker run -d --name xiuery-php-fpm -p 9000:9000 \
   -v $WORKDIR_LNMP/www:/var/www/html \
   xiuery/php-fpm:7.2.9 
-# 也可以启动php-fpm:内部连接mysql
+# 启动php-fpm:内部连接mysql(这样可以在代码连接mysql时host=mysql)
+# 注： 这种连接方式，从网页速度来看，比较慢（可能是忘了原因）
 sudo docker run -d --name xiuery-php-fpm -p 9000:9000 \
   -v $WORKDIR_LNMP/www:/var/www/html \
   --link xiuery-mysql:mysql \
@@ -73,11 +74,9 @@ sudo docker ps -a | grep nginx | awk '{print $1}' | xargs sudo docker stop
 sudo docker ps -a | grep nginx | awk '{print $1}' | xargs sudo docker rm
 # 拉取镜像
 sudo docker pull nginx:1.14
-# 创建www目录
+# 创建www目录:启动nginx时将nginx的conf挂载在宿主机上
 sudo mkdir -p $WORKDIR_LNMP/nginx/conf
-# 启动nginx时将nginx的conf挂载在宿主机上
-# 因此这里要先准备好conf
-# ...
+sudo cp -r SOURCE $WORKDIR_LNMP/nginx
 sudo mkdir -p $WORKDIR_LNMP/nginx/log
 sudo rm -rf $WORKDIR_LNMP/www
 sudo mkdir -p $WORKDIR_LNMP/www
@@ -85,6 +84,7 @@ sudo mkdir -p $WORKDIR_LNMP/www
 sudo docker run -d --name xiuery-nginx \
   -p 9001:9001 \
   -p 9002:9002 \
+  -p 9003:9003 \
   -v $WORKDIR_LNMP/nginx/conf:/etc/nginx \
   -v $WORKDIR_LNMP/nginx/log:/var/log/nginx \
   -v $WORKDIR_LNMP/www:/var/www/html \
