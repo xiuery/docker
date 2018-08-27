@@ -74,7 +74,6 @@ docker-php-ext-install MODULE
 FROM php:7.2-fpm
 LABEL author=xiuery
 
-FROM php:7.2-fpm
 RUN docker-php-ext-install pdo_mysql \
 	&& docker-php-ext-install mysqli \
 	&& pecl install redis-4.0.1 \
