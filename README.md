@@ -1,8 +1,8 @@
 ## docker
 
 - link
-[docker hub](https://hub.docker.com/u/xiuery/)
-[docker document](https://docs.docker.com/get-started/)
+  * [docker hub](https://hub.docker.com/u/xiuery/)
+  * [docker document](https://docs.docker.com/get-started/)
 
 - INSTALL
 ```
