@@ -69,7 +69,7 @@ sudo docker exec -ti xiuery-php-fpm /bin/bash
 docker-php-ext-install MODULE
 ```
 
-- php-fpm: Dockerfile
+- php-fpm-base:7.2.9
 ```
 FROM php:7.2-fpm
 LABEL author=xiuery
