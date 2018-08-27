@@ -1,12 +1,12 @@
 ## lnmp
 
 - link
-[mysql](https://hub.docker.com/_/mysql/)
-[php-fpm](https://hub.docker.com/_/php/)
-[nginx](https://hub.docker.com/_/nginx/)
-[phpmyadmin](https://hub.docker.com/r/phpmyadmin/phpmyadmin/)
-[phpmyadmin](https://docs.phpmyadmin.net/zh_CN/latest/index.html)
-[docker hub](https://hub.docker.com/u/xiuery/)
+  * [mysql](https://hub.docker.com/_/mysql/)
+  * [php-fpm](https://hub.docker.com/_/php/)
+  * [nginx](https://hub.docker.com/_/nginx/)
+  * [phpmyadmin](https://hub.docker.com/r/phpmyadmin/phpmyadmin/)
+  * [phpmyadmin](https://docs.phpmyadmin.net/zh_CN/latest/index.html)
+  * [docker hub](https://hub.docker.com/u/xiuery/)
 
 - 设置WORKDIR
 ```
@@ -48,6 +48,8 @@ sudo docker ps -a | grep php-fpm | awk '{print $1}' | xargs sudo docker stop
 sudo docker ps -a | grep php-fpm | awk '{print $1}' | xargs sudo docker rm
 # 拉取镜像
 sudo docker pull xiuery/php-fpm:7.2.9 
+# 官方镜像
+sudo docker pull php:7.2-fpm
 # 创建php目录
 sudo rm -rf $WORKDIR_LNMP/php
 sudo mkdir -p $WORKDIR_LNMP/php
