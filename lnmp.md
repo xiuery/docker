@@ -72,7 +72,7 @@ docker-php-ext-install MODULE
 - php-fpm Dockerfile
 ```
 FROM php:7.2-fpm
-LABEL author=colin
+LABEL author=xiuery
 
 FROM php:7.2-fpm
 RUN docker-php-ext-install pdo_mysql \
