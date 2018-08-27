@@ -88,6 +88,18 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install -j$(nproc) gd
 ```
 
+- php-fpm: redis
+```
+# 手动下载安装
+RUN curl -O http://pecl.php.net/get/redis-4.1.1.tgz \
+	&& tar -zxvf redis-4.1.1.tgz \
+	&& cd redis-4.1.1 \
+	&& phpize \
+	&& ./configure -with-php-config=/usr/local/bin/php-config \
+	&& make \
+	&& make install
+```
+
 - nginx
 ```
 # 停止并删除已运行的
