@@ -75,9 +75,7 @@ FROM php:7.2-fpm
 LABEL author=xiuery
 
 RUN docker-php-ext-install pdo_mysql \
-	&& docker-php-ext-install mysqli \
-	&& pecl install redis-4.0.1 \
-	&& docker-php-ext-enable redis
+	&& docker-php-ext-install mysqli
 RUN apt-get update && apt-get install -y \
 		libfreetype6-dev \
 		libjpeg62-turbo-dev \
@@ -87,18 +85,21 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install -j$(nproc) gd
 ```
 
-- php-fpm: composer
-```
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-	&& php composer-setup.php \
-	&& php -r "unlink('composer-setup.php');" \
-	&& mv composer.phar /usr/local/bin/composer \
-	&& composer self-update
-```
-
 - php-fpm: redis
 ```
-# 手动下载安装
+FROM xiuery/php-fpm-base:7.2.9
+LABEL author=xiuery
+
+RUN pecl install redis-4.0.1 \
+	&& docker-php-ext-enable redis
+```
+
+- php-fpm: redis(手动下载安装)
+```
+# 注： 这种方式缺将extension = redis.so写入ini文件
+FROM xiuery/php-fpm-base:7.2.9
+LABEL author=xiuery
+
 RUN curl -O http://pecl.php.net/get/redis-4.1.1.tgz \
 	&& tar -zxvf redis-4.1.1.tgz \
 	&& cd redis-4.1.1 \
@@ -106,6 +107,18 @@ RUN curl -O http://pecl.php.net/get/redis-4.1.1.tgz \
 	&& ./configure -with-php-config=/usr/local/bin/php-config \
 	&& make \
 	&& make install
+```
+
+- php-fpm: composer
+```
+FROM xiuery/php-fpm-base:7.2.9
+LABEL author=xiuery
+
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+	&& php composer-setup.php \
+	&& php -r "unlink('composer-setup.php');" \
+	&& mv composer.phar /usr/local/bin/composer \
+	&& composer self-update
 ```
 
 - nginx
