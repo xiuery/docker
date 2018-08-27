@@ -69,7 +69,7 @@ sudo docker exec -ti xiuery-php-fpm /bin/bash
 docker-php-ext-install MODULE
 ```
 
-- php-fpm Dockerfile
+- php-fpm: Dockerfile
 ```
 FROM php:7.2-fpm
 LABEL author=xiuery
@@ -85,6 +85,15 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install -j$(nproc) iconv \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 	&& docker-php-ext-install -j$(nproc) gd
+```
+
+- php-fpm: composer
+```
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+	&& php composer-setup.php \
+	&& php -r "unlink('composer-setup.php');" \
+	&& mv composer.phar /usr/local/bin/composer \
+	&& composer self-update
 ```
 
 - php-fpm: redis
