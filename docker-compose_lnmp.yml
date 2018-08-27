@@ -1,0 +1,54 @@
+version: '2'
+services:
+  nginx:
+    image: xiuery/nginx:1.14.0
+    environment:
+      TZ: Asia/Shanghai
+    stdin_open: true
+    volumes:
+    - /home/projects/lnmp/nginx/conf:/etc/nginx
+    - /home/projects/lnmp/nginx/log:/var/log/nginx
+    - /home/projects/lnmp/www:/var/www/html
+    tty: true
+    logging:
+      driver: json-file
+    links:
+    - php-fpm:php-fpm
+    ports:
+    - 9001:9001/tcp
+    - 9002:9002/tcp
+    - 9003:9003/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  mysql:
+    image: xiuery/mysql:5.7.23
+    environment:
+      TZ: Asia/Shanghai
+    stdin_open: true
+    volumes:
+    - /home/projects/lnmp/mysql:/var/lib/mysql
+    tty: true
+    logging:
+      driver: json-file
+    ports:
+    - 3307:3306/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  php-fpm:
+    image: xiuery/php-fpm:redis-gd
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root
+    stdin_open: true
+    volumes:
+    - /home/projects/lnmp/www:/var/www/html
+    tty: true
+    logging:
+      driver: json-file
+    links:
+    - mysql:mysql
+    ports:
+    - 9000:9000/tcp
+    labels:
+      io.rancher.container.pull_image: always
+
