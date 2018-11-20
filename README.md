@@ -163,6 +163,9 @@ SHELL ["executable", "parameters"]
 
 # 构建镜像
 sudo docker build -t="IMAGE:TAG" .
+# 禁用缓存
+sudo docker build --no-cache -t="IMAGE:TAG" .
+
 ```
 
 - 管理容器数据
